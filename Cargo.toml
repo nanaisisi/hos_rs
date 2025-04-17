@@ -1,0 +1,9 @@
+[package]
+name = "hos_rs"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.4.8", features = ["derive"] }
+crossterm = "0.29.0"  # ターミナル制御用ライブラリを追加
+
