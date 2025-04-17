@@ -1,11 +1,11 @@
 use clap::{Parser, Subcommand};
 use crossterm::{
-    ExecutableCommand, Result, cursor,
+    ExecutableCommand, cursor,
     event::{self, Event, KeyCode},
-    style::{self, Color, Stylize},
+    style::{self, Color},
     terminal::{self, Clear, ClearType},
 };
-use std::io::{self, Write, stdout};
+use std::io::{Write, stdout};
 use std::process;
 use std::{thread, time::Duration};
 
@@ -36,7 +36,7 @@ fn main() {
                 eprintln!("エラーが発生しました: {:?}", e);
             }
         }
-        None => {
+        _none => {
             println!("コマンドが指定されていません。--help でヘルプを表示します。");
             process::exit(1);
         }
@@ -62,7 +62,7 @@ fn display_os_logo() {
     println!("アーキテクチャ: x86_64");
 }
 
-fn display_babel_stream() -> Result<()> {
+fn display_babel_stream() -> std::io::Result<()> {
     // ターミナルを代替スクリーンバッファモードに切り替え
     terminal::enable_raw_mode()?;
     let mut stdout = stdout();
