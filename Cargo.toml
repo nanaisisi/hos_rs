@@ -1,9 +1,30 @@
+cargo-features = ["codegen-backend"]
 [package]
 name = "hos_rs"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-clap = { version = "4.4.8", features = ["derive"] }
-crossterm = "0.29.0"  # ターミナル制御用ライブラリを追加
+clap = { version = "4.5.37", features = ["derive"] }
+crossterm = "0.29.0"
 
+[toolchain]
+channel = "nightly"
+
+[build]
+rustc-wrapper = "sccache"
+
+
+[target.x86_64-pc-windows-msvc]
+linker = "rust-lld.exe"
+rustflags =   "-Zshare-generics=y"
+
+
+[unstable]
+codegen-backend = true
+
+[profile.dev]
+codegen-backend = "cranelift"
+
+[profile.dev.package."*"]
+codegen-backend = "llvm"
