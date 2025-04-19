@@ -19,7 +19,6 @@ rustc-wrapper = "sccache"
 linker = "rust-lld.exe"
 rustflags =   "-Zshare-generics=y"
 
-
 [unstable]
 codegen-backend = true
 
