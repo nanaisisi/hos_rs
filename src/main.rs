@@ -2,7 +2,6 @@ use clap::{Parser, Subcommand};
 use crossterm::{
     ExecutableCommand, cursor,
     event::{self, Event, KeyCode},
-    style::{self, Color},
     terminal::{self, Clear, ClearType},
 };
 use std::io::{Write, stdout};
@@ -188,7 +187,7 @@ fn display_babel_simple() -> std::io::Result<()> {
     for y in 0..height {
         let row_offset = (y + offset) % 2;
         for x in 0..(width / 6) {
-            let x_pos = x * 6 + row_offset * 3;
+            let x_pos = x * 6 + row_offset; // 1文字だけ右にズレるように修正
             if x_pos < width.saturating_sub(5) {
                 screen_lines[y as usize].push(x_pos);
             }
@@ -226,14 +225,14 @@ fn display_babel_simple() -> std::io::Result<()> {
         stdout.flush()?;
 
         // 1行ずつ上にシフト
-        let last_line = screen_lines.remove(0);
+        let _last_line = screen_lines.remove(0);
         screen_lines.push(Vec::new()); // 新しい空の行を追加
 
         // 最下段の行を新しいパターンで更新
         let bottom_y = height - 1;
         let row_offset = (bottom_y + offset) % 2;
         for x in 0..(width / 6) {
-            let x_pos = x * 6 + row_offset * 3;
+            let x_pos = x * 6 + row_offset; // 1文字だけ右にズレるように修正
             if x_pos < width.saturating_sub(5) {
                 screen_lines[height as usize - 1].push(x_pos);
             }
