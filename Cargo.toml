@@ -8,16 +8,15 @@ edition = "2024"
 clap = { version = "4.5.37", features = ["derive"] }
 crossterm = "0.29.0"
 
-[toolchain]
-channel = "nightly"
-
 [build]
 rustc-wrapper = "sccache"
-
 
 [target.x86_64-pc-windows-msvc]
 linker = "rust-lld.exe"
 rustflags =   "-Zshare-generics=y"
+
+[toolchain]
+channel = "nightly"
 
 [unstable]
 codegen-backend = true
