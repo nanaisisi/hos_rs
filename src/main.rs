@@ -50,10 +50,10 @@ fn main() {
 }
 
 fn display_os_logo() {
+    use image::io::Reader as ImageReader;
+    use sixel_rs::encoder::Encoder;
     use std::fs;
     use std::io::Write;
-    use image::io::Reader as ImageReader;
-    use sixel::encoder::Encoder;
     use std::path::Path;
     use std::thread;
     use std::time::Duration;
@@ -67,7 +67,11 @@ fn display_os_logo() {
     let mut frames: Vec<_> = entries
         .filter_map(|e| e.ok())
         .map(|e| e.path())
-        .filter(|p| p.extension().map(|ext| ext == "png" || ext == "jpg").unwrap_or(false))
+        .filter(|p| {
+            p.extension()
+                .map(|ext| ext == "png" || ext == "jpg")
+                .unwrap_or(false)
+        })
         .collect();
     frames.sort();
 
@@ -89,13 +93,15 @@ fn display_os_logo() {
         stdout.flush().ok();
         // sixelエンコードして出力
         let mut encoder = Encoder::new();
-        encoder.encode_bytes(
-            img.to_rgba8().as_raw(),
-            img.width() as usize,
-            img.height() as usize,
-            sixel::encoder::PixelFormat::RGBA8888,
-            &mut stdout
-        ).ok();
+        encoder
+            .encode_bytes(
+                img.to_rgba8().as_raw(),
+                img.width() as usize,
+                img.height() as usize,
+                sixel::encoder::PixelFormat::RGBA8888,
+                &mut stdout,
+            )
+            .ok();
         stdout.flush().ok();
         // 適度なフレーム間隔
         thread::sleep(Duration::from_millis(100));
