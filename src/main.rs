@@ -50,22 +50,57 @@ fn main() {
 }
 
 fn display_os_logo() {
-    // Windows用のロゴ (実際の環境に応じて表示を変更できます)
-    println!(
-        "
-    ██╗    ██╗██╗███╗   ██╗██████╗  ██████╗ ██╗    ██╗███████╗
-    ██║    ██║██║████╗  ██║██╔══██╗██╔═══██╗██║    ██║██╔════╝
-    ██║ █╗ ██║██║██╔██╗ ██║██║  ██║██║   ██║██║ █╗ ██║███████╗
-    ██║███╗██║██║██║╚██╗██║██║  ██║██║   ██║██║███╗██║╚════██║
-    ╚███╔███╔╝██║██║ ╚████║██████╔╝╚██████╔╝╚███╔███╔╝███████║
-     ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝╚═════╝  ╚═════╝  ╚══╝╚══╝ ╚══════╝
-                                                              
-    "
-    );
+    use std::fs;
+    use std::io::Write;
+    use image::io::Reader as ImageReader;
+    use sixel::encoder::Encoder;
+    use std::path::Path;
+    use std::thread;
+    use std::time::Duration;
 
-    println!("OS: Windows");
-    println!("バージョン: 10/11");
-    println!("アーキテクチャ: x86_64");
+    // framesディレクトリ内のPNGファイルを取得
+    let frame_dir = Path::new("frames");
+    let Ok(entries) = fs::read_dir(frame_dir) else {
+        println!("framesディレクトリがありません。画像を配置してください。");
+        return;
+    };
+    let mut frames: Vec<_> = entries
+        .filter_map(|e| e.ok())
+        .map(|e| e.path())
+        .filter(|p| p.extension().map(|ext| ext == "png" || ext == "jpg").unwrap_or(false))
+        .collect();
+    frames.sort();
+
+    if frames.is_empty() {
+        println!("framesディレクトリに画像がありません。");
+        return;
+    }
+
+    // ターミナルをsixel対応にする（Windows Terminal等でのみ動作）
+    let mut stdout = std::io::stdout();
+    for frame_path in frames.iter().cycle() {
+        // 画像を読み込み
+        let img = match ImageReader::open(frame_path).and_then(|r| r.decode()) {
+            Ok(img) => img,
+            Err(_) => continue,
+        };
+        // 画面クリア
+        print!("\x1b[2J\x1b[H");
+        stdout.flush().ok();
+        // sixelエンコードして出力
+        let mut encoder = Encoder::new();
+        encoder.encode_bytes(
+            img.to_rgba8().as_raw(),
+            img.width() as usize,
+            img.height() as usize,
+            sixel::encoder::PixelFormat::RGBA8888,
+            &mut stdout
+        ).ok();
+        stdout.flush().ok();
+        // 適度なフレーム間隔
+        thread::sleep(Duration::from_millis(100));
+        // qキーで終了（省略可）
+    }
 }
 
 fn display_babel_stream() -> std::io::Result<()> {
