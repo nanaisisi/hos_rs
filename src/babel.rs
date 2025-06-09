@@ -57,13 +57,11 @@ pub fn display_babel_stream() -> std::io::Result<()> {
         }
         thread::sleep(Duration::from_millis(150));
         offset = (offset + 1) % 2;
-        if event::poll(Duration::from_millis(50))? {
-            if let Event::Key(key) = event::read()? {
-                if key.code == KeyCode::Char('q') {
+        if event::poll(Duration::from_millis(50))?
+            && let Event::Key(key) = event::read()?
+                && key.code == KeyCode::Char('q') {
                     should_quit = true;
                 }
-            }
-        }
     }
     stdout.execute(cursor::Show)?;
     stdout.execute(terminal::LeaveAlternateScreen)?;

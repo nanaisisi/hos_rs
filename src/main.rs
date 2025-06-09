@@ -1,12 +1,6 @@
 use clap::{Parser, Subcommand};
-use crossterm::{
-    ExecutableCommand, cursor,
-    event::{self, Event, KeyCode},
-    terminal::{self, Clear, ClearType},
-};
-use std::io::{Write, stdout};
+
 use std::process;
-use std::{thread, time::Duration};
 
 mod babel;
 mod hos;
@@ -35,7 +29,7 @@ fn main() {
         }
         Some(Commands::Babel) => {
             if let Err(e) = babel::display_babel_stream() {
-                eprintln!("エラーが発生しました: {:?}", e);
+                eprintln!("エラーが発生しました: {e:?}");
             }
         }
         _none => {
