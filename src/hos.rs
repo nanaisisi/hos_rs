@@ -52,24 +52,21 @@ pub fn display_os_logo() {
             // chafaで画像をANSIアートに変換して表示
             let output = Command::new("chafa")
                 .arg(frame_path)
-                .arg(format!("--size={}x{}", width, height))
+                .arg(format!("--size={width}x{height}"))
                 .arg("--symbols=block")
                 .output();
-            if let Ok(output) = output {
-                if output.status.success() {
+            if let Ok(output) = output
+                && output.status.success() {
                     let _ = stdout.write_all(&output.stdout);
                 }
-            }
             stdout.flush().ok();
             // qキーで終了
-            if crossterm::event::poll(Duration::from_millis(100)).unwrap_or(false) {
-                if let Ok(crossterm::event::Event::Key(key)) = crossterm::event::read() {
-                    if let crossterm::event::KeyCode::Char('q') = key.code {
+            if crossterm::event::poll(Duration::from_millis(100)).unwrap_or(false)
+                && let Ok(crossterm::event::Event::Key(key)) = crossterm::event::read()
+                    && let crossterm::event::KeyCode::Char('q') = key.code {
                         should_quit = true;
                         break;
                     }
-                }
-            }
         }
     }
     stdout.execute(cursor::Show).ok();
