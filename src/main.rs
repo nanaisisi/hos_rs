@@ -12,23 +12,28 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// OSのロゴを表示するコマンド
-    Hos,
+    /// OSのロゴを表示するコマンド（sixel/chafa）
+    HosChafa,
     /// babelという文字を流し続けるコマンド
     Babel,
+    /// OSのロゴをImageMagickでASCIIアート表示するコマンド
+    HosMagick,
 }
 
 fn main() {
     let cli = Cli::parse();
 
     match &cli.command {
-        Some(Commands::Hos) => {
+        Some(Commands::HosChafa) => {
             hos::display_os_logo();
         }
         Some(Commands::Babel) => {
             if let Err(e) = babel::display_babel_stream() {
-                eprintln!("エラーが発生しました: {e:?}");
+                eprintln!("エラーが発生しました: {:?}", e);
             }
+        }
+        Some(Commands::HosMagick) => {
+            hos::display_os_logo_magick();
         }
         _none => {
             println!("コマンドが指定されていません。--help でヘルプを表示します。");

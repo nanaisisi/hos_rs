@@ -1,5 +1,9 @@
-cargo run -- hos
 cargo run -- babel
+
+none
+
+cargo run -- HosChafa
+cargo run -- HosMagick
 
 use chafa
 because 
