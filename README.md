@@ -1,3 +1,5 @@
+# AI 生成です。
+
 cargo run -- babel
 
 none
